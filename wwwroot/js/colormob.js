@@ -138,6 +138,7 @@ function draw() {
         ctx.fillRect(0, lineInterval * (lineCount + 1), ctx.canvas.width, 2);
         ctx.fillRect(lineInterval * (lineCount + 1), 0, 2, ctx.canvas.width);
     }
+    drawAllSquares();
     // draw each token it its current location
     for (var tokenCount = 0; tokenCount < allTokens.length; tokenCount++) {
 
@@ -153,7 +154,7 @@ function draw() {
             allTokens[tokenCount].imgIdTag
         );
     }
-    drawAllSquares();
+    
     // if the mouse is hovering over the location of a token, show yellow highlight
     if (hoverToken !== null) {
         ctx.fillStyle = "yellow";
