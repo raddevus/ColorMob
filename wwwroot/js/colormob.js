@@ -5,6 +5,7 @@ var ctx = null;
 var theCanvas = null;
 var firebaseTokenRef = null;
 var currentUuid = null;
+const GRID_SIZE = 800;
 
 window.addEventListener("load", initApp);
 var mouseIsCaptured = false;
@@ -37,7 +38,7 @@ function initApp() {
     theCanvas = document.getElementById("gamescreen");
     ctx = theCanvas.getContext("2d");
 
-    ctx.canvas.height = 800;
+    ctx.canvas.height = GRID_SIZE;
     ctx.canvas.width = ctx.canvas.height;
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mousedown", mouseDownHandler);
@@ -184,14 +185,14 @@ function handleMouseMove(e) {
             if (tempx < 0) {
                 hoverItem.gridLocation.x = 0;
             }
-            if (tempx + lineInterval > 650) {
-                hoverItem.gridLocation.x = 650 - lineInterval;
+            if (tempx + lineInterval > GRID_SIZE) {
+                hoverItem.gridLocation.x = GRID_SIZE - lineInterval;
             }
             if (tempy < 0) {
                 hoverItem.gridLocation.y = 0;
             }
-            if (lineInterval + tempy > 650) {
-                hoverItem.gridLocation.y = 650 - lineInterval;
+            if (lineInterval + tempy > GRID_SIZE) {
+                hoverItem.gridLocation.y = GRID_SIZE - lineInterval;
             }
 
             allTokens[hoverItem.idx] = hoverItem;
