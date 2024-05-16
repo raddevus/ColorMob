@@ -37,7 +37,7 @@ function initApp() {
     theCanvas = document.getElementById("gamescreen");
     ctx = theCanvas.getContext("2d");
 
-    ctx.canvas.height = 650;
+    ctx.canvas.height = 800;
     ctx.canvas.width = ctx.canvas.height;
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mousedown", mouseDownHandler);
