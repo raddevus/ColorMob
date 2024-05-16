@@ -27,6 +27,7 @@ function token(userToken) {
     this.imgSourceSize = userToken.imgSourceSize;
     this.imgIdTag = userToken.imgIdTag;
     this.gridLocation = userToken.gridLocation;
+    this.color = userToken.color;
 }
 
 function gridlocation(value) {
@@ -41,13 +42,6 @@ function initApp() {
 
     ctx.canvas.height = GRID_SIZE;
     ctx.canvas.width = ctx.canvas.height;
-
-    // init the allSquares for use when determining when 
-    // a pawn enters a specific square
-    for (var x =0;x<GRID_SIZE / LINES;x++)
-    {
-        // allSquares[x] = 
-    }
 
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mousedown", mouseDownHandler);
@@ -108,6 +102,7 @@ function initTokens() {
 
         var currentToken = null;
         // add 3 pawns
+        var tokenColors = ["red","blue","green"];
         for (var i = 0; i < 3; i++) {
             currentToken = new token({
                 size: lineInterval,
@@ -115,7 +110,8 @@ function initTokens() {
                 imgSourceY: 0 * 128,
                 imgSourceSize: 128,
                 imgIdTag: 'allPawns',
-                gridLocation: new gridlocation({ x: i * lineInterval, y: 3 * lineInterval })
+                gridLocation: new gridlocation({ x: i * lineInterval, y: 3 * lineInterval }),
+                color: tokenColors[i]
             });
             allTokens.push(currentToken);
         }
@@ -178,8 +174,10 @@ function draw() {
 }
 
 function drawAllSquares(){
+
     allSquares.forEach( item => {
-        roundRect(ctx,item.x,item.y,item.width,item.height,item.radius,"blue","black");
+        console.log(`${item.color}`);
+        roundRect(ctx,item.x,item.y,item.width,item.height,item.radius,item.color,"black");
     });
 
 }
@@ -289,7 +287,9 @@ function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
     ctx.closePath();
     if (fill) {
       ctx.fill();
+      ctx.fillStyle = fill;
     }
+
     if (stroke) {
       ctx.stroke();
     }
@@ -301,7 +301,7 @@ function mouseUpHandler() {
     for (var j = 0; j < allTokens.length; j++) {
         allTokens[j].isMoving = false;
     }
-    allSquares.push({x:currentToken.gridLocation.x,y:currentToken.gridLocation.y,height:LINES*2,width:LINES*2,radius:5})
+    allSquares.push({x:currentToken.gridLocation.x,y:currentToken.gridLocation.y,height:LINES*2,width:LINES*2,radius:5,color:currentToken.color})
 }
 
 function hitTest(mouseLocation, hitTestObject) {
