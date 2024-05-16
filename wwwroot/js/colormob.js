@@ -6,6 +6,7 @@ var theCanvas = null;
 var firebaseTokenRef = null;
 var currentUuid = null;
 const GRID_SIZE = 800;
+var allSquares = [];
 
 window.addEventListener("load", initApp);
 var mouseIsCaptured = false;
@@ -40,6 +41,14 @@ function initApp() {
 
     ctx.canvas.height = GRID_SIZE;
     ctx.canvas.width = ctx.canvas.height;
+
+    // init the allSquares for use when determining when 
+    // a pawn enters a specific square
+    for (var x =0;x<GRID_SIZE / LINES;x++)
+    {
+        // allSquares[x] = 
+    }
+
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mousedown", mouseDownHandler);
 
@@ -144,6 +153,7 @@ function draw() {
             allTokens[tokenCount].imgIdTag
         );
     }
+    drawAllSquares();
     // if the mouse is hovering over the location of a token, show yellow highlight
     if (hoverToken !== null) {
         ctx.fillStyle = "yellow";
@@ -163,6 +173,14 @@ function draw() {
             hoverToken.imgIdTag
         );
     }
+    
+}
+
+function drawAllSquares(){
+    allSquares.forEach( item => {
+        roundRect(ctx,item.x,item.y,item.width,item.height,item.radius,"blue","black");
+    });
+
 }
 
 function drawClippedAsset(sx, sy, swidth, sheight, x, y, w, h, imageId) {
@@ -242,11 +260,47 @@ function mouseDownHandler(event) {
     }
 }
 
+function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
+    if (typeof stroke === 'undefined') {
+      stroke = true;
+    }
+    if (typeof radius === 'undefined') {
+      radius = 5;
+    }
+    if (typeof radius === 'number') {
+      radius = {tl: radius, tr: radius, br: radius, bl: radius};
+    } else {
+      var defaultRadius = {tl: 0, tr: 0, br: 0, bl: 0};
+      for (var side in defaultRadius) {
+        radius[side] = radius[side] || defaultRadius[side];
+      }
+    }
+    ctx.beginPath();
+    ctx.moveTo(x + radius.tl, y);
+    ctx.lineTo(x + width - radius.tr, y);
+    ctx.quadraticCurveTo(x + width, y, x + width, y + radius.tr);
+    ctx.lineTo(x + width, y + height - radius.br);
+    ctx.quadraticCurveTo(x + width, y + height, x + width - radius.br, y + height);
+    ctx.lineTo(x + radius.bl, y + height);
+    ctx.quadraticCurveTo(x, y + height, x, y + height - radius.bl);
+    ctx.lineTo(x, y + radius.tl);
+    ctx.quadraticCurveTo(x, y, x + radius.tl, y);
+    ctx.closePath();
+    if (fill) {
+      ctx.fill();
+    }
+    if (stroke) {
+      ctx.stroke();
+    }
+  
+  }
+
 function mouseUpHandler() {
     mouseIsCaptured = false;
     for (var j = 0; j < allTokens.length; j++) {
         allTokens[j].isMoving = false;
     }
+    allSquares.push({x:currentToken.gridLocation.x,y:currentToken.gridLocation.y,height:LINES*2,width:LINES*2,radius:5})
 }
 
 function hitTest(mouseLocation, hitTestObject) {
