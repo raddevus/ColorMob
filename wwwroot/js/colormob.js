@@ -48,20 +48,7 @@ function initApp() {
 
     connection.on("ReceiveData", handleData);
 
-    function handleData(drawData) {
-        if (currentUuid == ""){
-            allTokens[drawData.idx].gridLocation.x = drawData.x;
-            allTokens[drawData.idx].gridLocation.y = drawData.y;
-            draw();
-        }
-        else{
-            if (currentUuid == drawData.uuid){
-                allTokens[drawData.idx].gridLocation.x = drawData.x;
-                allTokens[drawData.idx].gridLocation.y = drawData.y;
-                draw();
-            }
-        }
-    };
+    connection.on("ReceiveSquareData", handleSquareData)
 
     connection.start().then(function () {
         console.log("Hub is started.");
@@ -70,6 +57,27 @@ function initApp() {
     });
 
     initBoard();
+}
+
+function handleData(drawData) {
+    if (currentUuid == ""){
+        allTokens[drawData.idx].gridLocation.x = drawData.x;
+        allTokens[drawData.idx].gridLocation.y = drawData.y;
+        draw();
+    }
+    else{
+        if (currentUuid == drawData.uuid){
+            allTokens[drawData.idx].gridLocation.x = drawData.x;
+            allTokens[drawData.idx].gridLocation.y = drawData.y;
+            draw();
+        }
+    }
+};
+
+function handleSquareData(square){
+    console.log(`Receiving square data... ${square}`);
+    allSquares.push({x:square.x,y:square.y,height:LINES*2,width:LINES*2,radius:5,color:square.fill} );
+    draw();
 }
 
 function initBoard() {
@@ -302,6 +310,10 @@ function mouseUpHandler() {
         allTokens[j].isMoving = false;
     }
     allSquares.push({x:currentToken.gridLocation.x,y:currentToken.gridLocation.y,height:LINES*2,width:LINES*2,radius:5,color:currentToken.color})
+    connection.invoke("SendSquares", currentToken.gridLocation.x, currentToken.gridLocation.y, currentToken.color, currentUuid)
+            .catch(function (error){
+                return console.error(error.toString());
+    });
 }
 
 function hitTest(mouseLocation, hitTestObject) {
